@@ -7,4 +7,4 @@
 # Notes additionelles
 Pour demander une correction, veuillez ouvrir un ticket dans la section "Issues".
 
-Les cours sont mis à jours automatiquement selon 
+Les cours sont mis à jours automatiquement selon mes notes

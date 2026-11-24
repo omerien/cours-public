@@ -69,14 +69,14 @@ async function main() {
   const usedOutputs = new Set();
 
   for (const document of documents) {
-    const { file, title } = document;
+    const { annee, file, title } = document;
 
     if (typeof file !== "string" || !file.endsWith(".md")) {
       throw new Error(`Fichier invalide: ${file}`);
     }
 
     // Resolve the source relative to the repository root.
-    const source = path.resolve(root, file);
+    const source = path.resolve(root, annee, file);
     const relativeSource = path.relative(root, source);
 
     // Prevent paths escaping the repository.
@@ -87,10 +87,10 @@ async function main() {
     ) {
       throw new Error(`Document must be inside the repository: ${file}`);
     }
-    
+
     // Verify that the source is a regular file.
     const stat = await fs.stat(source);
-    
+
     if (!stat.isFile()) {
       throw new Error(`Not a regular file: ${file}`);
     }
@@ -195,9 +195,9 @@ async function main() {
 </html>`;
 
     await fs.writeFile(output, page, "utf8");
-
     indexEntries.push({
       title,
+      annee,
       href: relativeOutput.split(path.sep).join("/")
     });
 
@@ -205,9 +205,18 @@ async function main() {
   }
 
   // Generate the website homepage.
-  const links = indexEntries.map(({ title, href }) =>
-    `<li><a href="${escapeHtml(href)}">${escapeHtml(title)}</a></li>`
-  ).join("\n");
+  let links = "";
+  while (indexEntries.length > 0) {
+    let currSection = indexEntries[indexEntries.length-1].annee;
+    links += `<h2>${currSection}</h2><ul>`;
+    for (let i = indexEntries.length - 1; i >= 0; i--) {
+      if (indexEntries[i].annee == currSection) {
+        links += `<li><a href="${escapeHtml(indexEntries[i].href)}">${escapeHtml(indexEntries[i].title)}</a></li>`;
+        indexEntries.splice(i, 1);
+      }
+    }
+    links += "</ul>";
+  }
 
   const index = `<!DOCTYPE html>
 <html lang="en">
@@ -231,7 +240,7 @@ async function main() {
 </head>
 <body>
   <h1>Tous les cours disponibles</h1>
-  <ul>${links}</ul>
+  ${links}
 </body>
 </html>`;
 
@@ -240,8 +249,9 @@ async function main() {
     index,
     "utf8"
   );
+  console.log("Rendered the homepage");
 
-  console.log(`Successfully rendered ${documents.length} documents.`);
+  console.log(`Successfully rendered ${documents.length+1} documents.`);
 }
 
 main().catch((error) => {

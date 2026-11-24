@@ -1,14 +1,17 @@
 [
   {
-    "file": "P2/SM301.md",
-    "title": "SM301 - Probabilités"
+    "annee": "P2",
+    "file": "SP303.md",
+    "title": "SP302 - Physique moderne"
   },
   {
-    "file": "P2/SM302.md",
+    "annee": "P2",
+    "file": "SM302.md",
     "title": "SM302 - Fonction de plusieurs variables"
   },
   {
-    "file": "P2/SP303.md",
-    "title": "SP302 - Physique moderne"
+    "annee": "P2",
+    "file": "SM301.md",
+    "title": "SM301 - Probabilités"
   }
 ]
